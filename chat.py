@@ -1,8 +1,16 @@
 from WPP_Whatsapp import Create
 import os 
-import openpyxl
 import json
 
+
+def catchQR(qrCode: str, asciiQR: str, attempt: int, urlCode: str):
+    print(f"qrCode: {type(qrCode)} - {qrCode}...")
+    print(f"asciiQR: {type(asciiQR)} - {asciiQR}...")
+    print(f"urlCode: {type(urlCode)} - {urlCode}")
+    print("Processing QR code...")
+    with open("base64.txt",'w') as file:
+        file.write(str(qrCode))
+    print("Saving QR code image from base64 data...")
 
 current_dir = f"{os.getcwd()}/chat"
 print(current_dir)
@@ -13,7 +21,10 @@ class RenderWhatApp:
         self.user_data_dir = current_dir
         self.creator = Create(session=self.your_session_name, 
                         user_data_dir=self.user_data_dir,
-                        headless=False)
+                        headless=False,
+                        catchQR=catchQR,
+                        logQR=False
+                        )
 
         self.client = self.creator.start()
         # Now scan Whatsapp Qrcode in browser
@@ -51,10 +62,9 @@ class RenderWhatApp:
         return result
         
 
-# chat = RenderWhatApp()
+chat = RenderWhatApp()
 # print(chat.getContacts())
-# print(chat.sendMessage("+923090310514","hello world"))
+print(chat.sendMessage("+923090310514","hello world"))
 # print(chat.getMessage("+923090310514"))
 # print(chat.sendImage("+923060149015","auto image send","/home/momin/Desktop/download.jpeg"))
 # print(chat.sendGif("+923060149015","/home/momin/Downloads/file_example_MP4_480_1_5MG.mp4"))
-

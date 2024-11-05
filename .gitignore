@@ -1,2 +1,2 @@
-# Ignore build directories
+# Ignore dependency directories
 chat/*
