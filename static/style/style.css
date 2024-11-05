@@ -1,0 +1,70 @@
+.container_body {
+    height: 100vh;
+    overflow-y: auto; /* Enables vertical scrolling when content overflows */
+    overflow-x: auto; /* Enables vertical scrolling when content overflows */
+    position: fixed;
+    position: flex;
+    margin-left: 9px;
+}
+
+body {
+    padding-top: 10px; /* Offset for fixed-top navbar */
+    margin-left: 275px;
+    
+   
+
+}
+.offcanvas-start {
+    transform: translateX(0%) !important; /* Always visible */
+}
+.offcanvas-backdrop {
+    display: none; /* Disable backdrop */
+}
+    /* Ensure offcanvas does not overlap content when always visible */
+    
+
+
+.oncanvas {
+position: fixed; /* Fixed positioning relative to the viewport */
+margin-top: 5px; /* Align the top edge with the top of the viewport */
+left: 5px; /* Align the left edge with the left of the viewport */
+height: 100%; /* Full height of the viewport */
+width: 250px; /* Width of the sidebar */
+background-color: #ffffff; /* Light grey background */
+/* border-right: 10px solid #a51f1f; */
+padding: 1rem; /* Spacing inside the oncanvas */
+overflow-y: auto; /* Enable vertical scrolling if the content is taller than the viewport */
+z-index: 1000; /* Ensure it sits above other content */
+
+border: 1px solid #000000;
+border-radius: 5px;
+
+}
+
+
+
+.custom-side-nav-link {
+background-color: #38b6ff; 
+border-radius: 8px; 
+color: white;
+
+}
+
+.oncanvas-header {
+border-bottom: 1px solid #ffffff; /* Light grey line under the header for separation */
+padding-bottom: 0.5rem; /* Space below the header */
+margin-bottom: 1rem; /* Space between header and body */
+}
+
+.oncanvas-title {
+font-size: 1.5rem; /* Larger font for the title */
+font-weight: 500; /* Medium weight for the title font */
+color: #000000; /* Dark grey color, for better contrast */
+}
+
+.oncanvas-body {
+font-size: 1rem; /* Standard font size for the body */
+color: #000000; /* Slightly lighter grey than the title, for hierarchy */
+}
+        
+  

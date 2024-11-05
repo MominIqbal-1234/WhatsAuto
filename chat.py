@@ -1,5 +1,8 @@
 from WPP_Whatsapp import Create
 import os 
+import openpyxl
+import json
+
 
 current_dir = f"{os.getcwd()}/chat"
 print(current_dir)
@@ -20,11 +23,38 @@ class RenderWhatApp:
             raise Exception(self.creator.state)
 
 
-    def sendMessage(self,message,phone_number):
+    def sendMessage(self,phone_number,message):
         # Simple message
         result = self.client.sendText(phone_number, message)
         return result
 
+    def getContacts(self):
+        result = self.client.getAllContacts()
+        with open('contact.json','w') as file:
+            file.write(str(json.dumps(result,indent=2)))
+        print(".....")
+
+    def getMessage(self,phone_number):
+        messages = self.client.getMessages(phone_number)
+        # print(messages)
+        with open('message.json','w') as file:
+            file.write(str(json.dumps(messages,indent=2)))
+        print(".....")
+   
+
+    def sendImage(self,phone_number,message,image_path):
+        result = self.client.sendImage(phone_number, filePath=image_path, caption=message)
+        return result
+
+    def sendGif(self,phone_number,image_path):
+        result = self.client.sendGif(phone_number, image_path)
+        return result
+        
 
 # chat = RenderWhatApp()
-# print(chat.sendMessage("hello world","+923090310514"))
+# print(chat.getContacts())
+# print(chat.sendMessage("+923090310514","hello world"))
+# print(chat.getMessage("+923090310514"))
+# print(chat.sendImage("+923060149015","auto image send","/home/momin/Desktop/download.jpeg"))
+# print(chat.sendGif("+923060149015","/home/momin/Downloads/file_example_MP4_480_1_5MG.mp4"))
+

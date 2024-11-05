@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+
+{% block topbar %}
+{% endblock topbar %}
+
+
+{% block body %}
+
+<div class="container my-3">
+
+
+  <div class="container">
+    <h5>Welcome back, {{session['first_name']}}</h5>
+  </div>
+
+
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">Attendance Info</h3>
+
+      <div class="d-flex flex-row mx-1" style="width: 100%; height: 80px; padding: 0">
+
+        <!-- start div -->
+        <div class="card mb-1 shadow bg-white rounded" style="width: 100%; height: 80px; padding: 0">
+          <div class="row g-0">
+            <!-- <div class="col-md-1 mx-4 "> -->
+            <div class="col-md-1 mx-3">
+              <img src="{{ url_for('static', filename='icon/bag.png') }}" class="rounded-circle my-3" height="50"
+                width="50" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h6 class="card-title mx-1">Total WorkForce</h6>
+                <p class="card-text">
+                  <small class="text-body-secondary mx-1">{{totalUser}}</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end div -->
+
+
+
+
+        <div class="card mb-1 shadow bg-white rounded mx-2" style="width: 100%; height: 80px; padding: 0">
+          <div class="row g-0">
+
+            <div class="col-md-1 mx-3">
+              <img src="{{ url_for('static', filename='icon/incentive.png') }}" class="rounded-circle my-3" height="50"
+                width="50" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h6 class="card-title">Incentives</h6>
+                <p class="card-text">
+                  <small class="text-body-secondary">{{Incentives}}</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end div -->
+
+
+
+        <div class="card mb-1 shadow bg-white rounded mx-1" style="width: 100%; height: 80px; padding: 0">
+          <div class="row g-0">
+            <!-- <div class="col-md-1 mx-4 "> -->
+            <div class="col-md-1 mx-3">
+              <img src="{{ url_for('static', filename='icon/payment.png') }}" class="rounded-circle my-3" height="50"
+                width="50" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h6 class="card-title">Salary</h6>
+                <p class="card-text">
+                  <small class="text-body-secondary">{{Salary}}</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- end div -->
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Search -->
+<div class="container my-2 mb-2">
+  <div class="card">
+    <div class="card-body">
+      <div class="container">
+        <form class="d-flex" role="search" action="" method="post">
+          <input class="form-control me-2" type="search" name="query" placeholder="ID or Name or Employee Type "
+            aria-label="Search" required>
+          <button class="btn text-light" style="width: 200px; background-color: #38b6ff;" type="submit">
+
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-search"
+              viewBox="0 0 16 16">
+              <path
+                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+            </svg>
+
+          </button>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+
+  {% if message %}
+  <div class="container my-4">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error ! </strong>{{message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endif %}
+
+
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="container my-4">
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+      <strong>Error ! </strong>{{message}}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+
+</div>
+<!-- End Search  -->
+
+
+<div class="container">
+  <div class="card">
+    <div class="card-body">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">ID</th>
+            <th scope="col">Employee Name</th>
+            <th scope="col">Role</th>
+            <th scope="col">Employee Type</th>
+            {% if session['is_superuser'] == True %}
+            <th scope="col">Action</th>
+            <th scope="col">Attendance</th>
+            {% endif %}
+          </tr>
+        </thead>
+
+        {% if allUser %}
+
+        {% for i in allUser %}
+        <tbody>
+          {% if i.username == session['username'] or i.is_superuser == True %}
+
+          {% else %}
+          <tr>
+            <th scope="row">{{loop.index}}</th>
+            <th scope="row">{{i.username}}</th>
+            <td>{{i.first_name}}</td>
+            <td>{{i.designation}}</td>
+            <td>{{i.paymentsummary}}</td>
+
+
+
+            {% if session['is_superuser'] == True %}
+            <td>
+
+
+              <a href="" style="text-decoration: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                  class="bi bi-pencil-square" viewBox="0 0 16 16">
+                  <path
+                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                  <path fill-rule="evenodd"
+                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                </svg>
+                Edit
+              </a>
+
+              <a href="" class="mx-2" style="text-decoration: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash3"
+                  viewBox="0 0 16 16">
+                  <path
+                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                </svg>
+                Delete
+              </a>
+
+
+            </td>
+
+            <td>
+              <a href="" class="mx-2"
+                style="text-decoration: none;">
+
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+                  class="bi bi-person-bounding-box" viewBox="0 0 16 16">
+                  <path
+                    d="M1.5 1a.5.5 0 0 0-.5.5v3a.5.5 0 0 1-1 0v-3A1.5 1.5 0 0 1 1.5 0h3a.5.5 0 0 1 0 1zM11 .5a.5.5 0 0 1 .5-.5h3A1.5 1.5 0 0 1 16 1.5v3a.5.5 0 0 1-1 0v-3a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 1-.5-.5M.5 11a.5.5 0 0 1 .5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 1 0 1h-3A1.5 1.5 0 0 1 0 14.5v-3a.5.5 0 0 1 .5-.5m15 0a.5.5 0 0 1 .5.5v3a1.5 1.5 0 0 1-1.5 1.5h-3a.5.5 0 0 1 0-1h3a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 1 .5-.5" />
+                  <path d="M3 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm8-9a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                </svg>
+                Attendance
+              </a>
+            </td>
+
+            {% endif %}
+
+
+
+          </tr>
+          {% endif %}
+        </tbody>
+        {% endfor %}
+
+        {% endif %}
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock body %}
