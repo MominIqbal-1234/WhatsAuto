@@ -1,9 +1,128 @@
 {% extends "base.html" %}
 
 
+{% block css %}
+<style>
+  .black-link {
+    color: black;
+    text-decoration: none;
+  }
 
+  .black-link:hover {
+    color: rgb(255, 255, 255);
+    /* Change to light blue on hover */
+  }
+
+  .hover-card {
+    background-color: white;
+    /* Default background color */
+    transition: background-color 1.10s ease;
+    /* Smooth transition */
+  }
+
+  .hover-card:hover {
+    background-color: #38B6FF;
+    /* Change background to light blue on hover */
+  }
+</style>
+
+{% endblock css %}
 
 {% block body %}
+
+<div class="container my-4">
+  <div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Welcom WhatsAuto</h4>
+
+      <!-- Row 1 -->
+      <div class="d-flex flex-row mx-1" style="width: 100%; padding: 0">
+        <!-- Card 1 -->
+        <a href="{{ url_for('contact') }}" class="black-link">
+          <div class="card mb-1 shadow bg-white rounded mb-2" style="width: 50%; height: 80px; padding: 0">
+            <div class="row g-0 rounded mb-2 hover-card">
+              <div class="col-md-1 mx-3">
+                <img src="{{ url_for('static', filename='icon/contact.png') }}" class="rounded-circle my-3" height="50"
+                  width="50" />
+              </div>
+              <div class="col-md-8">
+                <div class="card-body ">
+                  <h6 class="card-title my-3">Contacts</h6>
+                </div>
+              </div>
+            </div>
+        </a>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="card mb-1 shadow bg-white rounded mx-2" style="width: 50%; height: 80px; padding: 0">
+        <a href="{{url_for('connect_whats_auto')}}" class="black-link">
+          <div class="row g-0 rounded mb-2 hover-card">
+            <div class="col-md-1 mx-3">
+              <img src="{{ url_for('static', filename='icon/whatsapp.png') }}" class="rounded-circle my-3" height="50"
+                width="50" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h6 class="card-title my-3">Connect WahtsAPP</h6>
+
+              </div>
+            </div>
+          </div>
+      </div>
+      </a>
+    </div>
+
+
+
+
+
+    <!-- Row 2 -->
+    <div class="d-flex flex-row mx-1" style="width: 100%; padding: 0">
+      <!-- Card 3 -->
+      <a href="" class="black-link">
+        <div class="card mb-1 shadow bg-white rounded mb-2" style="width: 50%; height: 80px; padding: 0">
+          <div class="row g-0 rounded mb-3 hover-card">
+            <div class="col-md-1 mx-3">
+              <img src="{{ url_for('static', filename='icon/send_message.png') }}" class="rounded-circle my-3" height="50"
+                width="50" />
+            </div>
+            <div class="col-md-8">
+              <div class="card-body">
+                <h6 class="card-title my-3">Send Message</h6>
+
+              </div>
+            </div>
+          </div>
+      </a>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="card mb-1 shadow bg-white rounded mx-2" style="width: 50%; height: 80px; padding: 0">
+      <a href="" class="black-link">
+        <div class="row g-0 rounded mb-3 hover-card">
+          <div class="col-md-1 mx-3">
+            <img src="{{ url_for('static', filename='icon/payment.png') }}" class="rounded-circle my-3" height="50"
+              width="50" />
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h6 class="card-title my-3">Reports</h6>
+
+            </div>
+          </div>
+        </div>
+    </div>
+    </a>
+  </div>
+
+
+
+
+
+
+
+</div>
 
 
 {% endblock body %}

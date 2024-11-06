@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block navbar %}
+<nav class="nav">
+    <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-90deg-left" viewBox="0 0 16 16">
+            <path fill-rule="evenodd" d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708z"/>
+          </svg>
+        Back
+    </a>
+ 
+    
+  </nav>
+{% endblock navbar %}
+
+{% block body %}
+
+
+
+
+<div class="container my-5 d-flex justify-content-center" style="width: 100%;">
+    <!-- Card with Border and Shadow -->
+    <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+        <!-- Image Section -->
+        <div class="p-3" style="border-right: 1px solid #ffffff; display: flex; align-items: center; justify-content: center;">
+            <img src="{{ url_for('static', filename='icon/contact.png') }}" alt="Side Image" style="width: 200px; height: 200px;">
+        </div>
+        
+        <!-- Form Section -->
+        <div class="card-body">
+            <form action="{{ url_for('save_contact') }}" method="post">
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="name" id="" placeholder="Name *" required>
+                    <label for="">Name *</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="phone_number" id="" placeholder="Phone Number *" required>
+                    <label for="">Phone Number *</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="company_name" id="" placeholder="Company Name">
+                    <label for="">Company Name</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="email" id="" placeholder="Email">
+                    <label for="">Email</label>
+                </div>
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="address" id="" placeholder="Address">
+                    <label for="">Address</label>
+                </div>
+
+                <input type="submit" value="Save" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">
+
+            </form>
+        </div>
+    </div>
+    
+</div>
+
+
+
+<div class="container mb-5" style="width: 70%;">
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Name</th>
+            <th scope="col">Phone Number</th>
+            <th scope="col">Company Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Address</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        {% for i in all_contact %}
+        
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>{{i.name}}</td>
+            <td>{{i.phone_number}}</td>
+            <td>{{i.company_name}}</td>
+            <td>{{i.email}}</td>
+            <td>{{i.address}}</td>
+            <td>
+                <a href="{{ url_for('edit_contact',id=i.id) }}">Edit</a>
+                --
+                <a href="{{ url_for('delete' , id=i.id) }}">Delete</a>
+            </td>
+          </tr>
+        </tbody>
+        {% endfor %}
+      </table>
+</div>
+
+
+{% endblock body %}
+
