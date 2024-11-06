@@ -11,6 +11,8 @@ import time
 from chat import RenderWhatApp
 import sys
 import subprocess
+import shutil
+
 
 
 
@@ -23,13 +25,16 @@ os.environ['is_connected'] = "False"
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "weborm.settings")
 django.setup()
 
-from weborm.models import Contacts
+from weborm.models import Contacts,WhatsappConnect,FirstTime
 
 software_id = 1214
 software_version = 1.0
 software_name = "Hadi-Attendence-Tracking"
 
 
+# islogin = WhatsappConnect.objects.all().first()
+# if islogin != None:
+#     StartChat = RenderWhatApp()
 
 
 DEBUG = True
@@ -44,20 +49,20 @@ app = Flask(__name__, static_folder=static,template_folder=templete)
 app.secret_key = "__secret_key__" 
 
 
+
+
+
+
 def restart_program():
-    if DEBUG == True:
-        print("Restarting program...")
-        os.execv(sys.executable, ['python'] + sys.argv)
-    else:
-        print("Restarting program via batch script...")
-        subprocess.Popen("restart.bat", shell=True)
-        sys.exit()
+    print("Restarting program via batch script...")
+    # subprocess.Popen("restart.bat", shell=True)
+    os.execv(sys.executable, [sys.executable] + sys.argv)
+    # sys.exit()
 
 
 
 def background():
-    global render_whatApp
-    render_whatApp = RenderWhatApp()
+    RenderWhatApp()
     
 
     
@@ -146,42 +151,98 @@ def delete(id):
 
 @app.route('/connect_whats_auto' , methods =["GET"])
 def connect_whats_auto():
-    # task_thread = threading.Thread(target=background_task).start()
-    return render_template('connect_whats_auto.html')
+    is_login = WhatsappConnect.objects.all().first()
+    is_first_time = FirstTime.objects.all().first()
+    print(is_first_time)
+    return render_template('connect_whats_auto.html',
+                           is_login=is_login,
+                           is_first_time=is_first_time
+                           )
+
+@app.route('/logout' , methods =["GET"])
+def logout():
+
+    shutil.rmtree(f"{os.getcwd()}/chat")
+    WhatsappConnect.objects.all().delete()
+    restart_program()
+    return redirect('connect_whats_auto')
 
 @app.route('/connect_whatsapp' , methods =["GET"])
 def connect_whatsapp():
-    print("start connect //////////")
+    
     image_base64 = None
     
     thread = threading.Thread(target=background)
     thread.start()
-    # render_whatApp = RenderWhatApp()
-    # print(render_whatApp.state,"chat.creator")
-    
+   
     while True:
         time.sleep(1)
     
         if os.getenv('image_state') == "True":
-            # stop_event.set()  
-            # thread.join() 
             image_base64 = os.getenv('base64')
             
             break
 
     print(render_whatApp,"........")
-    html = render_template('connect_whats_auto.html',image_base64=image_base64)
-    new_window =webview.create_window('View In and Out Time', html=html, width=500, height=700,maximized=False,minimized=False,min_size=(500,700))
+    html = render_template('connect_whatsapp.html',image_base64=image_base64)
+    new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,min_size=(500,700))
     
-    is_connected = os.getenv('is_connected')
     while True:
+        time.sleep(1)
+        is_connected = os.getenv('is_connected')
         print(is_connected,"is_connected")
-        if is_connected:
+        if is_connected == "True":
+            WhatsappConnect(is_login=True).save()
             new_window.destroy()
             restart_program()
             break
+        else:
+            print("no connect")
             
     return jsonify(message="Webview window should open soon")
+
+
+
+def file_dialog(window):
+    file_types = ('Image Files (*.bmp;*.jpg;*.gif)', 'All files (*.*)')
+
+    result = window.create_file_dialog(
+        webview.OPEN_DIALOG, allow_multiple=True, file_types=file_types
+    )
+    return result
+
+
+@app.route('/open_file_dialog' , methods =["GET"])
+def open_file_dialog():
+    image_path = file_dialog(window)
+    print(type(image_path))
+    if os.name == "posix":
+        return jsonify({
+            "path":image_path[0]
+        })
+        
+    else:
+        return jsonify({
+            "path":image_path
+        })
+
+
+    
+
+
+@app.route('/send_message' , methods =["GET","POST"])
+def send_message():
+    if request.method == 'POST':
+        
+        message = request.form['message'].strip()
+        image = request.form['image'].strip()
+        if image != "":
+            print(message)
+            print(image)
+        print(message,"message")
+    return render_template('send_message.html')
+
+
 
 if __name__ == '__main__':
     webview.settings['ALLOW_DOWNLOADS'] = True

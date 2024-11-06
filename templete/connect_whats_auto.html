@@ -3,18 +3,57 @@
 {% block js %}
 
 <script>
-    function openWebview(event) {
+  function openWebview(event) {
       event.preventDefault(); // Prevent the default link click behavior
+
+      // Show the spinner
+      const anker_tag = document.getElementById('connect')
+      anker_tag.style.pointerEvents = "none"; 
+      anker_tag.innerHTML = `<div class="spinner-border text-info" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                      </div>`
+
+      // Make the fetch request
       fetch(`/connect_whatsapp`)
-        .then(response => response.json())
-        .then(data => {
-          console.log(data.message); // Log the response message
-        })
-        .catch(error => console.error('Error:', error));
-    }
-  </script>
+          .then(response => response.json())
+          .then(data => {
+              console.log(data.message); // Log the response message
+              
+              // Reload the page after a delay to simulate a task
+              setTimeout(() => {
+                  location.reload(); // Reloads the page
+              }, 1000); // Adjust delay as needed
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              document.getElementById('spinner').style.display = 'none'; // Hide the spinner if there's an error
+          });
+  }
+</script>
 {% endblock js %}
 
+{% block css %}
+
+<style>
+  /* Spinner styles */
+  .spinner {
+      display: none; /* Initially hidden */
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #38B6FF;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      animation: spin 1s linear infinite;
+      margin-left: 10px;
+  }
+
+  @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+  }
+</style>
+
+{% endblock css %}
 
 {% block navbar %}
 <nav class="nav">
@@ -44,28 +83,28 @@
         
         <!-- Form Section -->
         <div class="card-body">
-
-            {% if image_base64 %}
-            <img src="{{image_base64}}" alt="Side Image" style="width: 200px; height: 200px;">
-            {% else %}
-            <div class="container" style="margin-left: 110px; margin-bottom: 10px;">
-                <div class="container spinner-border text-danger" style="width: 5rem; height: 5rem;"  role="status">
-                    <span class="visually-hidden">Loading...</span>
-                  </div>
-            </div>
-            
-            {% endif %}
-
-         
-            <a href="#" onclick="openWebview(event)" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">Connect WhatsApp</a>
+          {% if is_login %}
+          <a href="{{ url_for('logout') }}" class="btn" style="background-color: #ff0000; border-color: #ff0000; color: white; width: 100%;" id="">Logout WhatsApp</a>
+          {% else %}
+          <a href="#" onclick="openWebview(event)" id='connect' class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">Connect WhatsApp</a>
+          
+          {% endif %}
             
         </div>
     </div>
    
 </div>
 
+{% if is_first_time  == None %}
+<div class="container" style="width: 650px;">
+  <div class="card">
+    <div class="card-body">
+      Missing Some Dependency Take Some Time Open QR-Code Please Waite
+    </div>
+  </div>
+</div>
 
-
+{% endif %}
 
 
 {% endblock body %}

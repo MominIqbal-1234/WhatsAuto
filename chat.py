@@ -7,7 +7,6 @@ from engine import read,write
 
 
 def catchQR(qrCode: str, asciiQR: str, attempt: int, urlCode: str):
-    write("base64.txt",str(qrCode))
     os.environ['base64'] = str(qrCode)
     os.environ['image_state'] = "True"
     
@@ -24,7 +23,7 @@ class RenderWhatApp:
                         user_data_dir=self.user_data_dir,
                         headless=False,
                         catchQR=catchQR,
-                        logQR=False
+                        logQR=True
                         )
         
         self.client = self.creator.start()

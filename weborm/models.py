@@ -13,6 +13,17 @@ class Contacts(models.Model):
 
 
 
+class WhatsappConnect(models.Model):
+    is_login = models.BooleanField()
 
+    class Meta:
+        app_label = 'weborm'
+
+
+class FirstTime(models.Model):
+    is_first_time = models.BooleanField()
+
+    class Meta:
+        app_label = 'weborm'
 
     
