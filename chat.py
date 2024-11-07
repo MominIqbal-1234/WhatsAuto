@@ -19,9 +19,9 @@ class RenderWhatApp:
         self.state = None
         self.your_session_name = "4329de6b-8d6e-42b7-b224-93115e174369"
         self.user_data_dir = current_dir
-        self.creator = Create(session=self.your_session_name, 
+        self.creator = Create(session=self.your_session_name, browser="firefox",
                         user_data_dir=self.user_data_dir,
-                        headless=False,
+                        headless=True,
                         catchQR=catchQR,
                         logQR=True
                         )

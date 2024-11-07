@@ -12,12 +12,21 @@ from chat import RenderWhatApp
 import sys
 import subprocess
 import shutil
+import tkinter as tk
+from spin_templete.templete import Render
 
 
+
+software_id = 1214
+software_version = 1.0
+software_name = "Hadi-Attendence-Tracking"
+
+static = os.path.abspath("static")
+templete = os.path.abspath("templete")
 
 
 stop_event = threading.Event()
-render_whatApp = None
+
 os.environ['image_state'] = "False"
 os.environ['is_connected'] = "False"
 
@@ -27,21 +36,13 @@ django.setup()
 
 from weborm.models import Contacts,WhatsappConnect,FirstTime
 
-software_id = 1214
-software_version = 1.0
-software_name = "Hadi-Attendence-Tracking"
+# Messages to display in sequence
+
+html = Render("templete")
 
 
-# islogin = WhatsappConnect.objects.all().first()
-# if islogin != None:
-#     StartChat = RenderWhatApp()
 
 
-DEBUG = True
-
-
-static = os.path.abspath("static")
-templete = os.path.abspath("templete")
 
 
 
@@ -50,7 +51,7 @@ app.secret_key = "__secret_key__"
 
 
 
-
+# StartChat = None
 
 
 def restart_program():
@@ -92,6 +93,21 @@ def messageBox(title,message,option):
 
 @app.route('/' , methods =["GET", "POST"])
 def home():
+    global StartChat
+    islogin = WhatsappConnect.objects.all().first()
+    print(islogin)
+    if islogin != None:
+        html = render_template('waite_page.html')
+        new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,
+                                          min_size=(200,300),on_top=True,confirm_close=True,
+                                          height=200,width=300,shadow=True,
+                                          text_select=False
+                                          )
+
+        StartChat = RenderWhatApp()
+        new_window.confirm_close = False
+        new_window.destroy()
+        
     return render_template('index.html')
 
 
@@ -183,7 +199,7 @@ def connect_whatsapp():
             
             break
 
-    print(render_whatApp,"........")
+    
     html = render_template('connect_whatsapp.html',image_base64=image_base64)
     new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,min_size=(500,700))
     
@@ -240,15 +256,21 @@ def send_message():
             print(message)
             print(image)
         print(message,"message")
+    print(StartChat.sendMessage("+923090310514","hello world"))
     return render_template('send_message.html')
 
 
 
 if __name__ == '__main__':
+
+
+
+
+
     webview.settings['ALLOW_DOWNLOADS'] = True
     window = webview.create_window('HAT (Hadi Attendance Tracking)',
                                    app,text_select=True,width=1400, 
-                                   height=700,min_size=(1400,700),
+                                   height=700,min_size=(1400,700),confirm_close=True
                                    ) # min_size=(1200,700)
     
     webview.start(window,

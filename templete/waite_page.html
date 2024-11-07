@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connecting</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background-color: #f0f8ff;
+            color: #333;
+        }
+        
+        .container {
+            text-align: center;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #38b6ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        .message-container {
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Spinner to show loading animation -->
+    <div class="spinner"></div>
+    
+    <!-- Message display area -->
+    <div class="message-container" id="messageContainer">Please wait...</div>
+</div>
+
+<script>
+    // Array of messages to display
+    const messages = [
+        "Please wait...",
+        "Starting connection...",
+        "Connecting to server...",
+        "Authenticating user...",
+        "Synchronizing data...",
+        "Optimizing connection...",
+        "Almost there...",
+        "Preparing interface...",
+        "Connection established! Welcome."
+    ];
+
+    let currentIndex = 0;
+    const messageContainer = document.getElementById("messageContainer");
+
+    function showNextMessage() {
+        if (currentIndex < messages.length) {
+            // Update the message text and fade in
+            messageContainer.textContent = messages[currentIndex];
+            messageContainer.style.opacity = 1;
+
+            // Fade out after 1 second
+            setTimeout(() => {
+                messageContainer.style.opacity = 0;
+                currentIndex++;
+                setTimeout(showNextMessage, 1000); // Call the next message after fade out
+            }, 2000); // Keep each message visible for 2 seconds
+        }
+    }
+
+    // Start displaying messages
+    showNextMessage();
+</script>
+
+</body>
+</html>
