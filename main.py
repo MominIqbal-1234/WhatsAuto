@@ -15,6 +15,7 @@ import shutil
 import tkinter as tk
 from spin_templete.templete import Render
 
+DEGUG = True
 
 
 software_id = 1214
@@ -97,7 +98,7 @@ def home():
     islogin = WhatsappConnect.objects.all().first()
     
     now_login = os.getenv('now_login')
-    if islogin != None and now_login == "False":
+    if islogin != None and now_login == "False" and DEGUG == False:
         html = render_template('waite_page.html')
         new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,
                                           min_size=(200,300),on_top=True,confirm_close=True,
@@ -251,31 +252,31 @@ def open_file_dialog():
     
 
 
-@app.route('/send_message', methods=["GET", "POST"])
-def send_message():
+# @app.route('/send_message', methods=["GET", "POST"])
+# def send_message():
     
-    all_contact = Contacts.objects.all()
-    if request.method == 'POST':
+#     all_contact = Contacts.objects.all()
+#     if request.method == 'POST':
         
-        message = request.form['message'].strip()
-        image_path = request.form.get('image_path',"").strip() 
-        
-        
-        selected_contacts = request.form.getlist('selected_contacts')
+#         message = request.form['message'].strip()
+#         image_path = request.form.get('image_path',"").strip() 
         
         
+#         selected_contacts = request.form.getlist('selected_contacts')
         
-        if not selected_contacts:
-            messageBox("Error","Contact Not Select","error")
-        else:
-            for id in selected_contacts:
-                time.sleep(2)
-                phone_number = all_contact.get(id=id)
-                if image_path != "":
-                    response = StartChat.sendImage(str(phone_number.phone_number),str(message),str(image_path))
+        
+        
+#         if not selected_contacts:
+#             messageBox("Error","Contact Not Select","error")
+#         else:
+#             for id in selected_contacts:
+#                 time.sleep(2)
+#                 phone_number = all_contact.get(id=id)
+#                 if image_path != "":
+#                     response = StartChat.sendImage(str(phone_number.phone_number),str(message),str(image_path))
                                    
-                else:
-                    response = StartChat.sendMessage(str(phone_number.phone_number),str(message))
+#                 else:
+#                     response = StartChat.sendMessage(str(phone_number.phone_number),str(message))
                     
                                    
 
@@ -283,9 +284,39 @@ def send_message():
     
     
     
+#     return render_template('send_message.html', all_contact=all_contact)
+
+
+@app.route('/send_message', methods=["GET","POST"])
+def send_message():
+    all_contact = Contacts.objects.all()
+    if request.method == 'POST':
+        contact_id = request.form.get('contact_id')
+        message = request.form.get('message')
+        image_path = request.form.get('image_path', "")
+
+        try:
+            # Retrieve the contact by ID
+            contact = Contacts.objects.get(id=contact_id)
+            if not contact:
+                return jsonify({"status": "error", "message": "Contact not found"}), 404
+
+            # Send the message (using your existing `StartChat` service)
+            if image_path:
+                response = StartChat.sendImage(contact.phone_number, message, image_path)
+            else:
+                response = StartChat.sendMessage(contact.phone_number, message)
+
+            # Return success or failure response
+            if response:
+                return jsonify({"status": "success", "message": "Message sent"})
+            else:
+                return jsonify({"status": "failed", "message": "Message failed to send"})
+        except Exception as e:
+            print(f"Error sending message: {e}")
+            return jsonify({"status": "error", "message": str(e)}), 500
+
     return render_template('send_message.html', all_contact=all_contact)
-
-
 
 if __name__ == '__main__':
 

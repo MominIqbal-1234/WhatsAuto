@@ -27,9 +27,7 @@ class RenderWhatApp:
         
         self.client = self.creator.start()
         
-        # Now scan Whatsapp Qrcode in browser
-
-        # check state of login
+        
         
         
         if self.creator.state != 'CONNECTED':

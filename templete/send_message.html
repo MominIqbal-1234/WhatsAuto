@@ -1,117 +1,157 @@
 {% extends "base.html" %}
 
-
-
 {% block js %}
-
 <script>
     function callOpenDialog() {
-        // Call the API
         fetch('/open_file_dialog', {
-            method: 'GET' // or 'POST' depending on the API requirements
+            method: 'GET'
         })
         .then(response => {
             if (!response.ok) {
                 throw new Error('Network response was not ok ' + response.statusText);
             }
-            return response.json(); // Assuming the API returns JSON
+            return response.json();
         })
         .then(data => {
-            console.log("API Response:", data); // Log the response data to the console
-            document.getElementById('view_path').innerHTML = data['path']
-            document.getElementById('path').value = data['path']
-
+            console.log("API Response:", data);
+            document.getElementById('view_path').innerHTML = data['path'];
+            document.getElementById('path').value = data['path'];
         })
         .catch(error => {
             console.error("There was a problem with the fetch operation:", error);
         });
     }
-</script>
 
+    async function sendMessagesSequentially(selectedContacts, message, imagePath) {
+        const submitButton = document.getElementById('submitBtn');
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Sending...`;
+
+        for (let i = 0; i < selectedContacts.length; i++) {
+            const contactId = selectedContacts[i];
+            const statusCell = document.getElementById(`status-${contactId}`);
+            
+            // Update the status cell to "Sending..."
+            statusCell.innerHTML = `<span class="spinner-border spinner-border-sm"></span> Sending...`;
+            
+            try {
+                // Prepare data for the current contact
+                const formData = new FormData();
+                formData.append('message', message);
+                formData.append('image_path', imagePath);
+                formData.append('contact_id', contactId);
+
+                // Send the message request
+                const response = await fetch('{{ url_for("send_message") }}', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                // Update the status to "Done" if sent successfully
+                if (data.status === 'success') {
+                    statusCell.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg> Done`;
+                } else {
+                    statusCell.innerHTML = `<span style="color: red;">Failed</span>`;
+                }
+            } catch (error) {
+                console.error("Error sending message to contact:", contactId, error);
+                statusCell.innerHTML = `<span style="color: red;">Error</span>`;
+            }
+        }
+
+        // Reset the submit button after all messages are sent
+        submitButton.disabled = false;
+        submitButton.innerHTML = 'Send';
+    }
+
+    function submitForm(event) {
+        event.preventDefault();
+
+        // Retrieve the message, image path, and selected contacts
+        const message = document.querySelector('input[name="message"]').value;
+        const imagePath = document.getElementById('path').value;
+        const selectedContacts = Array.from(document.querySelectorAll('input[name="selected_contacts"]:checked')).map(cb => cb.value);
+
+        if (selectedContacts.length === 0) {
+            alert("Please select at least one contact to send a message.");
+            return;
+        }
+
+        // Send messages sequentially to the selected contacts
+        sendMessagesSequentially(selectedContacts, message, imagePath);
+    }
+</script>
 {% endblock js %}
 
-
 {% block navbar %}
-<nav class="nav">
+<nav class="nav" style="position: fixed; top: 0; width: 100%; background-color: white; z-index: 1000; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); padding: 10px;">
     <a class="nav-link active" aria-current="page" href="{{ url_for('home') }}">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-90deg-left" viewBox="0 0 16 16">
             <path fill-rule="evenodd" d="M1.146 4.854a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H12.5A2.5 2.5 0 0 1 15 6.5v8a.5.5 0 0 1-1 0v-8A1.5 1.5 0 0 0 12.5 5H2.707l3.147 3.146a.5.5 0 1 1-.708.708z"/>
-          </svg>
+        </svg>
         Back
     </a>
- 
-    
-  </nav>
+</nav>
 {% endblock navbar %}
 
 
+
 {% block body %}
-
-
-<form action="{{ url_for('send_message') }}" method="post">
-    <div class="container my-5 d-flex justify-content-center" style="width: 100%;">
-        <!-- Card with Border and Shadow -->
+<form id="messageForm" onsubmit="submitForm(event)">
+    <div class="container my-5 d-flex justify-content-center" style="width: 150%;padding-top: 50px">
         <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
-            <!-- Image Section -->
             <div class="p-3" style="border-right: 1px solid #ffffff; display: flex; align-items: center; justify-content: center;">
                 <img src="{{ url_for('static', filename='icon/send_message.png') }}" alt="Side Image" style="width: 200px; height: 200px;">
             </div>
-            
-            <!-- Form Section -->
             <div class="card-body">
                 <div class="form-floating mb-2">
                     <input type="text" class="form-control" name="message" placeholder="Message *" required>
                     <label for="message">Message *</label>
                 </div>
                 <div class="mb-2">
-                    <button id="openDialogBtn" onclick="callOpenDialog();return false">Choose Image</button>
+                    <button id="openDialogBtn" onclick="callOpenDialog(); return false;">Choose Image</button>
                     <p id="view_path"></p>
-                    <input type="hidden" value="" id="path" class="form-control" name="image_path" required>
+                    <input type="hidden" id="path" name="image_path">
                 </div>
-
-                <input type="submit" value="Send" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">
+                <button type="submit" id="submitBtn" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;">Send</button>
             </div>
         </div>
     </div>
 
-    <!-- Contacts Table with Checkboxes -->
+    <!-- Contacts Table with Checkboxes and Status Column -->
     <div class="container mb-5" style="width: 70%;">
         <table class="table">
             <thead>
                 <tr>
-                    <th scope="col">Select</th>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Phone Number</th>
-                    <th scope="col">Company Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Address</th>
-                    <th scope="col">Action</th>
+                    <th>Select</th>
+                    <th>#</th>
+                    <th>Name</th>
+                    <th>Phone Number</th>
+                    <th>Company Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for i in all_contact %}
                 <tr>
-                    <!-- Checkbox for Selecting Contact -->
-                    <td>
-                        <input type="checkbox" name="selected_contacts" value="{{ i.id }}">
-                    </td>
+                    <td><input type="checkbox" name="selected_contacts" value="{{ i.id }}"></td>
                     <th scope="row">{{ loop.index }}</th>
                     <td>{{ i.name }}</td>
                     <td>{{ i.phone_number }}</td>
                     <td>{{ i.company_name }}</td>
                     <td>{{ i.email }}</td>
-                    <td>{{ i.address }}</td>
-                    <td>
-                        <a href="{{ url_for('edit_contact', id=i.id) }}">Edit</a> --
-                        <a href="{{ url_for('delete', id=i.id) }}">Delete</a>
-                    </td>
+                    <!-- Status cell with unique ID for each contact -->
+                    <td id="status-{{ i.id }}">Pending</td>
                 </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </form>
-
-
 {% endblock body %}
