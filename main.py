@@ -15,7 +15,7 @@ import shutil
 import tkinter as tk
 from spin_templete.templete import Render
 
-DEGUG = True
+DEGUG = False
 
 
 software_id = 1214
@@ -325,7 +325,7 @@ if __name__ == '__main__':
 
 
     webview.settings['ALLOW_DOWNLOADS'] = True
-    window = webview.create_window('HAT (Hadi Attendance Tracking)',
+    window = webview.create_window('WhatsAuto',
                                    app,text_select=True,width=1400, 
                                    height=700,min_size=(1400,700),confirm_close=True
                                    ) # min_size=(1200,700)
