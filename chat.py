@@ -29,7 +29,21 @@ class RenderWhatApp:
         
         
         
-        
+
+        # print(self.creator,"self.creator")
+        # print("-------------------------------------")
+        # print(dir(self.creator))
+        # print("-------------------------------------")
+
+        # print(self.creator.__dict__)
+        # print("-------------------------------------")
+
+   
+
+        # data = self.creator.get_state()
+        # print(data)
+        # print("-------------------------------------")
+
         if self.creator.state != 'CONNECTED':
             raise Exception(self.creator.state)
         

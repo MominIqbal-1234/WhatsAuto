@@ -289,25 +289,25 @@ def open_file_dialog():
 
 @app.route('/send_message', methods=["GET","POST"])
 def send_message():
-    all_contact = Contacts.objects.all()
+    
     if request.method == 'POST':
         contact_id = request.form.get('contact_id')
         message = request.form.get('message')
         image_path = request.form.get('image_path', "")
 
         try:
-            # Retrieve the contact by ID
+            
             contact = Contacts.objects.get(id=contact_id)
             if not contact:
                 return jsonify({"status": "error", "message": "Contact not found"}), 404
 
-            # Send the message (using your existing `StartChat` service)
+            
             if image_path:
                 response = StartChat.sendImage(contact.phone_number, message, image_path)
             else:
                 response = StartChat.sendMessage(contact.phone_number, message)
 
-            # Return success or failure response
+            
             if response:
                 return jsonify({"status": "success", "message": "Message sent"})
             else:
@@ -315,7 +315,8 @@ def send_message():
         except Exception as e:
             print(f"Error sending message: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
-
+            
+    all_contact = Contacts.objects.all()
     return render_template('send_message.html', all_contact=all_contact)
 
 if __name__ == '__main__':
