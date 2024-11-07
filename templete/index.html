@@ -1,6 +1,18 @@
 {% extends "base.html" %}
 
 
+
+
+{% block js %}
+<script>
+  function showLoginAlert() {
+      alert("Please login WahtsAPP");
+  }
+</script>
+
+{% endblock js %}
+
+
 {% block css %}
 <style>
   .black-link {
@@ -80,7 +92,11 @@
     <!-- Row 2 -->
     <div class="d-flex flex-row mx-1" style="width: 100%; padding: 0">
       <!-- Card 3 -->
+       {% if islogin != None: %}
       <a href="{{url_for('send_message')}}" class="black-link">
+        {% else %}
+        <a href="" class="black-link" onclick="showLoginAlert(); return false;">
+        {% endif %}
         <div class="card mb-1 shadow bg-white rounded mb-2" style="width: 50%; height: 80px; padding: 0">
           <div class="row g-0 rounded mb-3 hover-card">
             <div class="col-md-1 mx-3">

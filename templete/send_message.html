@@ -18,6 +18,7 @@
         })
         .then(data => {
             console.log("API Response:", data); // Log the response data to the console
+            document.getElementById('view_path').innerHTML = data['path']
             document.getElementById('path').value = data['path']
 
         })
@@ -47,73 +48,70 @@
 {% block body %}
 
 
-
-
-<div class="container my-5 d-flex justify-content-center" style="width: 100%;">
-    <!-- Card with Border and Shadow -->
-    <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
-        <!-- Image Section -->
-        <div class="p-3" style="border-right: 1px solid #ffffff; display: flex; align-items: center; justify-content: center;">
-            <img src="{{ url_for('static', filename='icon/send_message.png') }}" alt="Side Image" style="width: 200px; height: 200px;">
-        </div>
-        
-        <!-- Form Section -->
-        <div class="card-body">
-            <form action="{{ url_for('send_message') }}" method="post">
+<form action="{{ url_for('send_message') }}" method="post">
+    <div class="container my-5 d-flex justify-content-center" style="width: 100%;">
+        <!-- Card with Border and Shadow -->
+        <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+            <!-- Image Section -->
+            <div class="p-3" style="border-right: 1px solid #ffffff; display: flex; align-items: center; justify-content: center;">
+                <img src="{{ url_for('static', filename='icon/send_message.png') }}" alt="Side Image" style="width: 200px; height: 200px;">
+            </div>
+            
+            <!-- Form Section -->
+            <div class="card-body">
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="message" id="" placeholder="Message *" required>
-                    <label for="">Message *</label>
+                    <input type="text" class="form-control" name="message" placeholder="Message *" required>
+                    <label for="message">Message *</label>
                 </div>
-                <div class=" mb-2">
-                    
-                    <button id="openDialogBtn" onclick="callOpenDialog();return false">Open Dialog</button>
-                    <input type="text" name="image" id="path" class="form-control" value="{{image_path}}" readonly>
+                <div class="mb-2">
+                    <button id="openDialogBtn" onclick="callOpenDialog();return false">Choose Image</button>
+                    <p id="view_path"></p>
+                    <input type="hidden" value="" id="path" class="form-control" name="image_path" required>
                 </div>
-              
 
-                <input type="submit" value="Save" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">
-
-            </form>
+                <input type="submit" value="Send" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">
+            </div>
         </div>
     </div>
-    
-</div>
 
-
-
-<div class="container mb-5" style="width: 70%;">
-    <table class="table">
-        <thead>
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Name</th>
-            <th scope="col">Phone Number</th>
-            <th scope="col">Company Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Address</th>
-            <th scope="col">Action</th>
-          </tr>
-        </thead>
-        {% for i in all_contact %}
-        
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>{{i.name}}</td>
-            <td>{{i.phone_number}}</td>
-            <td>{{i.company_name}}</td>
-            <td>{{i.email}}</td>
-            <td>{{i.address}}</td>
-            <td>
-                <a href="{{ url_for('edit_contact',id=i.id) }}">Edit</a>
-                --
-                <a href="{{ url_for('delete' , id=i.id) }}">Delete</a>
-            </td>
-          </tr>
-        </tbody>
-        {% endfor %}
-      </table>
-</div>
+    <!-- Contacts Table with Checkboxes -->
+    <div class="container mb-5" style="width: 70%;">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Select</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Phone Number</th>
+                    <th scope="col">Company Name</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Address</th>
+                    <th scope="col">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in all_contact %}
+                <tr>
+                    <!-- Checkbox for Selecting Contact -->
+                    <td>
+                        <input type="checkbox" name="selected_contacts" value="{{ i.id }}">
+                    </td>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td>{{ i.name }}</td>
+                    <td>{{ i.phone_number }}</td>
+                    <td>{{ i.company_name }}</td>
+                    <td>{{ i.email }}</td>
+                    <td>{{ i.address }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_contact', id=i.id) }}">Edit</a> --
+                        <a href="{{ url_for('delete', id=i.id) }}">Delete</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
 
 
 {% endblock body %}

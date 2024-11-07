@@ -29,6 +29,7 @@ stop_event = threading.Event()
 
 os.environ['image_state'] = "False"
 os.environ['is_connected'] = "False"
+os.environ['now_login'] = "False"
 
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "weborm.settings")
@@ -38,7 +39,8 @@ from weborm.models import Contacts,WhatsappConnect,FirstTime
 
 # Messages to display in sequence
 
-html = Render("templete")
+
+is_first_time = FirstTime.objects.all().first()
 
 
 
@@ -51,14 +53,12 @@ app.secret_key = "__secret_key__"
 
 
 
-# StartChat = None
+
 
 
 def restart_program():
-    print("Restarting program via batch script...")
-    # subprocess.Popen("restart.bat", shell=True)
     os.execv(sys.executable, [sys.executable] + sys.argv)
-    # sys.exit()
+    
 
 
 
@@ -95,8 +95,9 @@ def messageBox(title,message,option):
 def home():
     global StartChat
     islogin = WhatsappConnect.objects.all().first()
-    print(islogin)
-    if islogin != None:
+    
+    now_login = os.getenv('now_login')
+    if islogin != None and now_login == "False":
         html = render_template('waite_page.html')
         new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,
                                           min_size=(200,300),on_top=True,confirm_close=True,
@@ -107,8 +108,10 @@ def home():
         StartChat = RenderWhatApp()
         new_window.confirm_close = False
         new_window.destroy()
+        os.environ['now_login'] = "True"
         
-    return render_template('index.html')
+    
+    return render_template('index.html',islogin=islogin)
 
 
 @app.route('/save_contact' , methods =["GET", "POST","PATCH"])
@@ -140,7 +143,7 @@ def edit_contact(id):
         email = request.form['email'].strip()
         address = request.form['address'].strip()
 
-        print(id)
+        
 
         update_contact = Contacts.objects.get(id=id)
         update_contact.name = name
@@ -159,7 +162,7 @@ def edit_contact(id):
 @app.route('/delete/<id>' , methods =["GET"])
 def delete(id):
     result = messageBox("Delete","Are You Sure!","ask")
-    print(type(result))
+    
     if result == True:
         Contacts.objects.filter(id=id).delete()
     
@@ -168,8 +171,8 @@ def delete(id):
 @app.route('/connect_whats_auto' , methods =["GET"])
 def connect_whats_auto():
     is_login = WhatsappConnect.objects.all().first()
-    is_first_time = FirstTime.objects.all().first()
-    print(is_first_time)
+    
+    
     return render_template('connect_whats_auto.html',
                            is_login=is_login,
                            is_first_time=is_first_time
@@ -206,14 +209,16 @@ def connect_whatsapp():
     while True:
         time.sleep(1)
         is_connected = os.getenv('is_connected')
-        print(is_connected,"is_connected")
+        
         if is_connected == "True":
             WhatsappConnect(is_login=True).save()
+            if is_first_time == None:
+                FirstTime(is_first_time=True).save()
             new_window.destroy()
             restart_program()
             break
         else:
-            print("no connect")
+            pass
             
     return jsonify(message="Webview window should open soon")
 
@@ -231,7 +236,7 @@ def file_dialog(window):
 @app.route('/open_file_dialog' , methods =["GET"])
 def open_file_dialog():
     image_path = file_dialog(window)
-    print(type(image_path))
+    
     if os.name == "posix":
         return jsonify({
             "path":image_path[0]
@@ -246,18 +251,39 @@ def open_file_dialog():
     
 
 
-@app.route('/send_message' , methods =["GET","POST"])
+@app.route('/send_message', methods=["GET", "POST"])
 def send_message():
+    
+    all_contact = Contacts.objects.all()
     if request.method == 'POST':
         
         message = request.form['message'].strip()
-        image = request.form['image'].strip()
-        if image != "":
-            print(message)
-            print(image)
-        print(message,"message")
-    print(StartChat.sendMessage("+923090310514","hello world"))
-    return render_template('send_message.html')
+        image_path = request.form.get('image_path',"").strip() 
+        
+        
+        selected_contacts = request.form.getlist('selected_contacts')
+        
+        
+        
+        if not selected_contacts:
+            messageBox("Error","Contact Not Select","error")
+        else:
+            for id in selected_contacts:
+                time.sleep(2)
+                phone_number = all_contact.get(id=id)
+                if image_path != "":
+                    response = StartChat.sendImage(str(phone_number.phone_number),str(message),str(image_path))
+                                   
+                else:
+                    response = StartChat.sendMessage(str(phone_number.phone_number),str(message))
+                    
+                                   
+
+
+    
+    
+    
+    return render_template('send_message.html', all_contact=all_contact)
 
 
 
