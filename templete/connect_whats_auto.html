@@ -51,6 +51,7 @@
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
   }
+  
 </style>
 
 {% endblock css %}
@@ -94,13 +95,15 @@
 </div>
 
 {% if is_first_time == None %}
-<div class="container" style="width: 650px;">
-  <div class="card">
-    <div class="card-body">
-      Missing Some Dependency Take Some Time Open QR-Code Please Waite
-    </div>
+<div class="container" style="width: 650px; margin: 20px auto; font-family: Arial, sans-serif;">
+  <div class="card" style="border: 1px solid #ddd; border-radius: 10px; box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1); background-color: #f9f9f9; padding: 20px;">
+    <h3 style="color: #333; font-weight: bold; text-align: center;">Note ...</h3>
+    <p style="color: #666; font-size: 16px; line-height: 1.6; text-align: center;">
+      Missing some dependencies. It may take a few minutes to open the QR code. Please wait and make sure you are connected to the internet.
+    </p>
   </div>
 </div>
+
 
 {% endif %}
 

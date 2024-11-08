@@ -5,8 +5,8 @@
 
 {% block js %}
 <script>
-  function showLoginAlert() {
-      alert("Please login WahtsAPP");
+  function showAlert(message) {
+      alert(message);
   }
 </script>
 
@@ -95,7 +95,7 @@
        {% if islogin != None: %}
       <a href="{{url_for('send_message')}}" class="black-link">
         {% else %}
-        <a href="" class="black-link" onclick="showLoginAlert(); return false;">
+        <a href="" class="black-link" onclick="showAlert('Please login WahtsAPP'); return false;">
         {% endif %}
         <div class="card mb-1 shadow bg-white rounded mb-2" style="width: 50%; height: 80px; padding: 0">
           <div class="row g-0 rounded mb-3 hover-card">
@@ -115,10 +115,13 @@
 
     <!-- Card 4 -->
     <div class="card mb-1 shadow bg-white rounded mx-2" style="width: 50%; height: 80px; padding: 0">
-      <a href="" class="black-link">
+      
+      
+        <a href="" class="black-link" onclick="showAlert('Coming Soon Next Update'); return false;">
+      
         <div class="row g-0 rounded mb-3 hover-card">
           <div class="col-md-1 mx-3">
-            <img src="{{ url_for('static', filename='icon/payment.png') }}" class="rounded-circle my-3" height="50"
+            <img src="{{ url_for('static', filename='icon/report.png') }}" class="rounded-circle my-3" height="50"
               width="50" />
           </div>
           <div class="col-md-8">

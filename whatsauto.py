@@ -3,24 +3,24 @@ import webview
 from tkinter import *
 import threading
 import webview.menu as wm
-import os
 import django
 from tkinter import messagebox
 import tkinter as tk
 import time
 from chat import RenderWhatApp
-import sys
 import subprocess
 import shutil
 import tkinter as tk
 import psutil
+import sys
+import os
 
 DEGUG = False
 
 
-software_id = 1214
+software_id = 1015
 software_version = 1.0
-software_name = "Hadi-Attendence-Tracking"
+software_name = "WhatsAuto (Take Easy)"
 
 
 
@@ -44,8 +44,6 @@ is_first_time = FirstTime.objects.all().first()
 
 
 
-import sys
-import os
 
 def resource_path(relative_path):
     
@@ -112,7 +110,7 @@ def home():
     now_login = os.getenv('now_login')
     if islogin != None and now_login == "False" and DEGUG == False:
         html = render_template('waite_page.html')
-        new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,
+        new_window =webview.create_window('Connect', html=html,resizable=False,
                                           min_size=(200,300),on_top=True,confirm_close=True,
                                           height=200,width=300,shadow=True,
                                           text_select=False
@@ -235,7 +233,7 @@ def connect_whatsapp():
 
     
     html = render_template('connect_whatsapp.html',image_base64=image_base64)
-    new_window =webview.create_window('Connect', html=html,maximized=False,minimized=False,min_size=(500,700))
+    new_window =webview.create_window('Connect', html=html,resizable=False,min_size=(500,700))
     
     while True:
         time.sleep(1)
@@ -356,13 +354,14 @@ if __name__ == '__main__':
 
 
     webview.settings['ALLOW_DOWNLOADS'] = True
-    window = webview.create_window('WhatsAuto',
+    window = webview.create_window(software_name,
                                    app,text_select=True,width=1400, 
-                                   height=700,min_size=(1400,700),confirm_close=True
+                                   height=700,min_size=(1400,700),confirm_close=True,resizable=False
                                    ) # min_size=(1200,700)
     
     webview.start(window,
         debug=False,
                   http_server=True,
-                  http_port=9000
+                  http_port=9000,
+                  icon=f"{static}/icon/logo.ico"
                   )
