@@ -347,9 +347,47 @@ def send_message():
     all_contact = Contacts.objects.all()
     return render_template('send_message.html', all_contact=all_contact)
 
+
+
+
+def show_about():
+    root = Tk()
+    root.attributes('-topmost', True)
+    root.withdraw()
+    messagebox.showinfo("About", f"{software_name}\n\n"
+                        "WhatsAuto automate you WhatsApp Message Take Easy "
+                        "Developer:\n"
+                        "WhatsAPP - Momin Iqbal : +923058632914 ")
+    
+    root.destroy()
+    root.mainloop()
+
+
+
+def on_closed():
+    for proc in psutil.process_iter(['pid', 'name', 'username']):
+        try:
+            if proc.info['name'] == "firefox.exe":
+                process = psutil.Process(proc.info['pid']) 
+                process.terminate() 
+                process.wait()
+            
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass
+
+
 if __name__ == '__main__':
 
 
+    menu_items = [
+        wm.Menu(
+            'About',
+            [
+                wm.MenuAction('About Developer', show_about),
+                
+            ],
+        ),
+    ]
 
 
 
@@ -358,10 +396,11 @@ if __name__ == '__main__':
                                    app,text_select=True,width=1400, 
                                    height=700,min_size=(1400,700),confirm_close=True,resizable=False
                                    ) # min_size=(1200,700)
-    
+    window.events.closed += on_closed
     webview.start(window,
         debug=False,
                   http_server=True,
                   http_port=9000,
-                  icon=f"{static}/icon/logo.ico"
+                  icon=f"{static}/icon/logo.ico",
+                   menu=menu_items,
                   )
