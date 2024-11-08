@@ -22,8 +22,7 @@ software_id = 1214
 software_version = 1.0
 software_name = "Hadi-Attendence-Tracking"
 
-static = os.path.abspath("static")
-templete = os.path.abspath("templete")
+
 
 
 stop_event = threading.Event()
@@ -57,8 +56,10 @@ def resource_path(relative_path):
 
     return os.path.join(base_path, relative_path)
 
-print(resource_path("index.html"))
 
+
+static = os.path.abspath(resource_path("static"))
+templete = os.path.abspath(resource_path("templete"))
 
 app = Flask(__name__, static_folder=static,template_folder=templete)
 app.secret_key = "__secret_key__" 
