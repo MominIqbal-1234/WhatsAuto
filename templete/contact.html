@@ -12,13 +12,9 @@
 {% endblock navbar %}
 
 {% block body %}
-
-
-
-
-<div class="container my-5 d-flex justify-content-center" style="width: 100%;padding-top: 50px">
+<div class="container my-5 d-flex justify-content-center" style="width: 100%; padding-top: 50px;">
     <!-- Card with Border and Shadow -->
-    <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 50%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
+    <div class="card" style="border: 1px solid #ffffff; display: flex; flex-direction: row; align-items: center; width: 80%; box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);">
         <!-- Image Section -->
         <div class="p-3" style="border-right: 1px solid #ffffff; display: flex; align-items: center; justify-content: center;">
             <img src="{{ url_for('static', filename='icon/contact.png') }}" alt="Side Image" style="width: 200px; height: 200px;">
@@ -28,35 +24,46 @@
         <div class="card-body">
             <form action="{{ url_for('save_contact') }}" method="post">
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="name" id="" placeholder="Name *" required>
-                    <label for="">Name *</label>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Name *" required>
+                    <label for="name">Name *</label>
+                </div>
+                
+                <!-- Country Code and Phone Number Fields -->
+                <div class="d-flex mb-2">
+                    <!-- Country Code -->
+                    <select class="form-select me-2" name="country_code" style="width: 30%;" required>
+                        <option value="+92">+92 (Pakistan)</option>
+                        <option value="+1">+1 (US/Canada)</option>
+                        <option value="+44">+44 (UK)</option>
+                        <option value="+91">+91 (India)</option>
+                        <!-- Add other country codes as needed -->
+                    </select>
+                    
+                    <!-- Phone Number (without country code) -->
+                    <div class="form-floating flex-grow-1">
+                        <input type="text" class="form-control" name="phone_number" id="phone_number" placeholder="Phone Number *" pattern="^[0-9]{7,12}$" required>
+                        <label for="phone_number">Phone Number *</label>
+                    </div>
+                </div>
+                
+                <div class="form-floating mb-2">
+                    <input type="text" class="form-control" name="company_name" id="company_name" placeholder="Company Name">
+                    <label for="company_name">Company Name</label>
                 </div>
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="phone_number" id="" placeholder="Phone Number *" required>
-                    <label for="">Phone Number *</label>
+                    <input type="text" class="form-control" name="email" id="email" placeholder="Email">
+                    <label for="email">Email</label>
                 </div>
                 <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="company_name" id="" placeholder="Company Name">
-                    <label for="">Company Name</label>
+                    <input type="text" class="form-control" name="address" id="address" placeholder="Address">
+                    <label for="address">Address</label>
                 </div>
-                <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="email" id="" placeholder="Email">
-                    <label for="">Email</label>
-                </div>
-                <div class="form-floating mb-2">
-                    <input type="text" class="form-control" name="address" id="" placeholder="Address">
-                    <label for="">Address</label>
-                </div>
-
-                <input type="submit" value="Save" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;" id="">
-
+                
+                <input type="submit" value="Save" class="btn" style="background-color: #38B6FF; border-color: #38B6FF; color: white; width: 100%;">
             </form>
         </div>
     </div>
-    
 </div>
-
-
 
 <div class="container mb-5" style="width: 70%;">
     <table class="table">
@@ -75,23 +82,20 @@
         
         <tbody>
           <tr>
-            <th scope="row">1</th>
-            <td>{{i.name}}</td>
-            <td>{{i.phone_number}}</td>
-            <td>{{i.company_name}}</td>
-            <td>{{i.email}}</td>
-            <td>{{i.address}}</td>
+            <th scope="row">{{ loop.index }}</th>
+            <td>{{ i.name }}</td>
+            <td>{{ i.country_code }} {{ i.phone_number }}</td>
+            <td>{{ i.company_name }}</td>
+            <td>{{ i.email }}</td>
+            <td>{{ i.address }}</td>
             <td>
-                <a href="{{ url_for('edit_contact',id=i.id) }}">Edit</a>
-                --
-                <a href="{{ url_for('delete' , id=i.id) }}">Delete</a>
+                <a href="{{ url_for('edit_contact', id=i.id) }}">Edit</a> --
+                <a href="{{ url_for('delete', id=i.id) }}">Delete</a>
             </td>
           </tr>
         </tbody>
         {% endfor %}
-      </table>
+    </table>
 </div>
 
-
 {% endblock body %}
-

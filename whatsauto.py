@@ -133,7 +133,9 @@ def save_contact():
         company_name = request.form['company_name'].strip()
         email = request.form['email'].strip()
         address = request.form['address'].strip()
-        Contacts(name=name,phone_number=phone_number,company_name=company_name,email=email,address=address).save()
+        country_code = request.form['country_code'].strip()
+        print(country_code,"country")
+        Contacts(name=name,phone_number=str(country_code) + str(phone_number),company_name=company_name,email=email,address=address).save()
 
     return redirect(request.referrer)
 
@@ -153,6 +155,7 @@ def edit_contact(id):
         company_name = request.form['company_name'].strip()
         email = request.form['email'].strip()
         address = request.form['address'].strip()
+
 
         
 
@@ -397,7 +400,7 @@ if __name__ == '__main__':
                                    height=700,min_size=(1300,700),confirm_close=True
                                    ) # min_size=(1200,700)
     window.events.closed += on_closed
-    webview.start(window,
+    webview.start(
         debug=False,
                   http_server=True,
                   http_port=9000,
