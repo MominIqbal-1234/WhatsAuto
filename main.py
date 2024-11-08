@@ -13,7 +13,7 @@ import sys
 import subprocess
 import shutil
 import tkinter as tk
-from spin_templete.templete import Render
+import psutil
 
 DEGUG = False
 
@@ -45,8 +45,19 @@ is_first_time = FirstTime.objects.all().first()
 
 
 
+import sys
+import os
 
+def resource_path(relative_path):
+    
+    if hasattr(sys, '_MEIPASS'):
+        base_path = sys._MEIPASS  # Temporary folder created by PyInstaller
+    else:
+        base_path = os.path.abspath(".")  # Base path when running normally
 
+    return os.path.join(base_path, relative_path)
+
+print(resource_path("index.html"))
 
 
 app = Flask(__name__, static_folder=static,template_folder=templete)
@@ -179,13 +190,31 @@ def connect_whats_auto():
                            is_first_time=is_first_time
                            )
 
+# @app.route('/logout' , methods =["GET"])
+# def logout():
+
+#     shutil.rmtree(f"{os.getcwd()}/chat")
+#     WhatsappConnect.objects.all().delete()
+#     restart_program()
+#     return redirect('connect_whats_auto')
+
 @app.route('/logout' , methods =["GET"])
 def logout():
-
-    shutil.rmtree(f"{os.getcwd()}/chat")
+    for proc in psutil.process_iter(['pid', 'name', 'username']):
+        try:
+            if proc.info['name'] == "firefox.exe":
+                process = psutil.Process(proc.info['pid']) 
+                process.terminate() 
+                process.wait()
+            
+        except (psutil.NoSuchProcess, psutil.AccessDenied, psutil.ZombieProcess):
+            pass  #
     WhatsappConnect.objects.all().delete()
+    shutil.rmtree(f"{os.getcwd()}/chat")
     restart_program()
     return redirect('connect_whats_auto')
+
+
 
 @app.route('/connect_whatsapp' , methods =["GET"])
 def connect_whatsapp():
@@ -315,7 +344,7 @@ def send_message():
         except Exception as e:
             print(f"Error sending message: {e}")
             return jsonify({"status": "error", "message": str(e)}), 500
-            
+
     all_contact = Contacts.objects.all()
     return render_template('send_message.html', all_contact=all_contact)
 
