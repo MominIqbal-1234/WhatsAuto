@@ -393,8 +393,8 @@ if __name__ == '__main__':
 
     webview.settings['ALLOW_DOWNLOADS'] = True
     window = webview.create_window(software_name,
-                                   app,text_select=True,width=1400, 
-                                   height=700,min_size=(1400,700),confirm_close=True,resizable=False
+                                   app,text_select=True,width=1000, 
+                                   height=700,min_size=(1000,700),confirm_close=True
                                    ) # min_size=(1200,700)
     window.events.closed += on_closed
     webview.start(window,
